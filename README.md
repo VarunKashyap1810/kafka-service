@@ -51,7 +51,7 @@ Sample command :
 
 (1) Topic create - .\bin\windows\kafka-topics.bat --create --topic mx-items-dev --bootstrap-server localhost:9092
 
-					.\bin\windows\kafka-topics.bat --describe --topic mx-items-dev --bootstrap-server localhost:9092
+		    .\bin\windows\kafka-topics.bat --describe --topic mx-items-dev --bootstrap-server localhost:9092
 					
 (2) Producer Create - .\bin\windows\kafka-console-producer.bat --topic mx-items-dev  --broker-list localhost:9092
 			
