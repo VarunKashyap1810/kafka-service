@@ -53,6 +53,11 @@ public class KafkaConsumerConfig {
 	public void listenGroupFoo(String message) {
 	    System.out.println("Received Message in group foo: " + message);
 	}
+	
+	@KafkaListener(topics = "SensorTopic1")
+	public void listenGroupS(String message) {
+	    System.out.println("Received Message in group foo: " + message);
+	}
 
 
 }

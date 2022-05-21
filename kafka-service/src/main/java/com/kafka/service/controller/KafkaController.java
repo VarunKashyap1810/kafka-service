@@ -1,5 +1,10 @@
 package com.kafka.service.controller;
 
+import java.util.Properties;
+
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -11,25 +16,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("kafka")
+@RequestMapping("/kafka")
 public class KafkaController {
 	
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
 
-	/*
-	 * public void sendMessage(String msg) { kafkaTemplate.send("Kafka-Practice",
-	 * msg); }
-	 */
-
-	
-	@GetMapping("/publish/{message}")
-	public void sendMessage(@PathVariable("message") String message) {
+	@GetMapping(value= "/publish/{key}/{message}")
+	public String sendMessage(@PathVariable("key") String key, @PathVariable("message") String message) {
         
 	    ListenableFuture<SendResult<String, String>> future = 
-	      kafkaTemplate.send("Kafka-Practice", message);
+	      kafkaTemplate.send("Kafka-Practice", key, message);
 		
 	    future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
+	    	
 
 	        @Override
 	        public void onSuccess(SendResult<String, String> result) {
@@ -42,5 +42,35 @@ public class KafkaController {
 	              + message + "] due to : " + ex.getMessage());
 	        }
 	    });
+	    
+	    return "Sent message=[" + message + "]";
 	}
+	
+	@GetMapping(value="/publish/sensorproducer")
+	public void sensorProducer(){
+		
+		String topicName = "SensorTopic1";
+
+	    Properties props = new Properties();
+	    props.put("bootstrap.servers", "localhost:9092");
+	    props.put("key.serializer","org.apache.kafka.common.serialization.StringSerializer");
+	    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+	    props.put("partitioner.class", "com.kafka.service.controller.SensorPartitioner");
+	    props.put("speed.sensor.name", "TSS");
+
+	    Producer<String, String> producer = new KafkaProducer <>(props);
+
+	       for (int i=0 ; i<10 ; i++)
+	       producer.send(new ProducerRecord<>(topicName,"SSP"+i,"500"+i));
+
+	       for (int i=0 ; i<10 ; i++)
+	       producer.send(new ProducerRecord<>(topicName,"TSS","500"+i));
+
+	       producer.close();
+
+	        System.out.println("SimpleProducer Completed.");
+		
+	}
+	
+	
 }

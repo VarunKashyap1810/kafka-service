@@ -10,6 +10,8 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
+import com.kafka.service.controller.SensorPartitioner;
+
 public class KafkaProducerConfig {
 	
 	@Bean
